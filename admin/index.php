@@ -55,6 +55,21 @@ function kiwi_cf_admin_menu() {
 
         add_action( 'load-' . $integration, 'kiwi_cf_load_integration_page', 10, 0 );
     }
+
+    add_submenu_page( 'kiwi',
+        'Kiwi Contact Form FAQ',
+        'FAQ',
+        'administrator',
+        'kiwi-faq',
+        'kiwi_cf_faq'
+    );
+}
+
+function kiwi_cf_faq() {
+    wp_enqueue_script( 'faq-script', plugins_url( '/views/js/faq.js', __FILE__ ), ['jquery'], '', TRUE );
+    wp_enqueue_style( 'faq-style', plugins_url( '/views/css/faq.css', __FILE__ ), [], '' );
+
+    require_once KIWI_CF_PLUGIN_DIR . '/admin/modules/faq.php';
 }
 
 add_action( 'admin_enqueue_scripts', 'kiwi_cf_admin_enqueue_scripts', 10, 1 );
