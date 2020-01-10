@@ -52,9 +52,9 @@ class Kiwi_CF_Contact_Form_List_Table extends WP_List_Table {
         }
 
         if ( ! empty( $_REQUEST['order'] ) ) {
-            if ( 'asc' == strtolower( $_REQUEST['order'] ) ) {
+            if ( 'asc' == strtolower( sanitize_text_field( $_REQUEST['order'] ) ) ) {
                 $args['order'] = 'ASC';
-            } elseif ( 'desc' == strtolower( $_REQUEST['order'] ) ) {
+            } elseif ( 'desc' == strtolower( sanitize_text_field( $_REQUEST['order'] ) ) ) {
                 $args['order'] = 'DESC';
             }
         }

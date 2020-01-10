@@ -91,7 +91,7 @@ function kiwi_cf_number_validation_filter( $result, $tag ) {
 	$name = $tag->name;
 
 	$value = isset( $_POST[$name] )
-		? trim( strtr( (string) $_POST[$name], "\n", " " ) )
+		? sanitize_text_field( trim( strtr( (string) $_POST[$name], "\n", " " ) ) )
 		: '';
 
 	$min = $tag->get_option( 'min', 'signed_int', true );

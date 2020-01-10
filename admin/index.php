@@ -169,12 +169,12 @@ function kiwi_cf_load_contact_form_admin() {
     $action = kiwi_cf_current_action();
 
     do_action( 'kiwi_cf_admin_load',
-        isset( $_GET['page'] ) ? trim( $_GET['page'] ) : '',
+        isset( $_GET['page'] ) ? sanitize_text_field ( trim( $_GET['page'] ) ) : '',
         $action
     );
 
     if ( 'save' == $action ) {
-        $id = isset( $_POST['post_ID'] ) ? $_POST['post_ID'] : '-1';
+        $id = isset( $_POST['post_ID'] ) ? (int)$_POST['post_ID'] : '-1';
         check_admin_referer( 'kiwi-save-contact-form_' . $id );
 
         if ( ! current_user_can( 'kiwi_cf_edit_contact_form', $id ) ) {
@@ -186,26 +186,26 @@ function kiwi_cf_load_contact_form_admin() {
 
     // Input validation & sanitization process
 
-        $args['title'] = isset( $_POST['post_title'] ) || !empty($_POST['post_title'])
-            ? esc_html($_POST['post_title']) : null;
+        $args['title'] = isset( $_POST['post_title'] ) || !empty( $_POST['post_title'] )
+            ? sanitize_text_field( $_POST['post_title'] ) : null;
 
-        $args['locale'] = isset( $_POST['kiwi-locale'] ) || !empty($_POST['kiwi-locale'])
-            ? $_POST['kiwi-locale'] : null;
+        $args['locale'] = isset( $_POST['kiwi-locale'] ) || !empty( $_POST['kiwi-locale'] )
+            ? sanitize_text_field( $_POST['kiwi-locale'] ) : null;
 
-        $args['form'] = isset( $_POST['kiwi-form'] ) || !empty($_POST['kiwi-form'])
-            ? $_POST['kiwi-form'] : '';
+        $args['form'] = isset( $_POST['kiwi-form'] ) || ! empty( $_POST['kiwi-form'] )
+            ? wp_kses_post( $_POST['kiwi-form'] ) : '';
 
-        $args['mail'] = isset( $_POST['kiwi-mail'] ) || !empty($_POST['kiwi-mail'])
-            ? $_POST['kiwi-mail'] : array();
+        $args['mail'] = isset( $_POST['kiwi-mail'] ) || !empty( $_POST['kiwi-mail'] )
+            ? kiwi_cf_sanitize_array( $_POST['kiwi-mail'] ) : array();
 
-        $args['mail_2'] = isset( $_POST['kiwi-mail-2'] ) || !empty($_POST['kiwi-mail-2'])
-            ? $_POST['kiwi-mail-2'] : array();
+        $args['mail_2'] = isset( $_POST['kiwi-mail-2'] ) || !empty( $_POST['kiwi-mail-2'] )
+            ? kiwi_cf_sanitize_array( $_POST['kiwi-mail-2'] ) : array();
 
-        $args['messages'] = isset( $_POST['kiwi-messages'] ) || !empty($_POST['kiwi-messages'])
-            ? $_POST['kiwi-messages'] : array();
+        $args['messages'] = isset( $_POST['kiwi-messages'] ) || !empty( $_POST['kiwi-messages'] )
+            ? kiwi_cf_sanitize_array( $_POST['kiwi-messages'] ) : array();
 
         $args['additional_settings'] = isset( $_POST['kiwi-additional-settings'] ) || !empty($_POST['kiwi-additional-settings'])
-            ? $_POST['kiwi-additional-settings'] : '';
+            ? sanitize_text_field( $_POST['kiwi-additional-settings'] ) : '';
 
         $args['mail']['body'] = esc_html($args['mail']['body']);
         $args['mail_2']['body'] = esc_html($args['mail_2']['body']);
@@ -266,8 +266,10 @@ function kiwi_cf_load_contact_form_admin() {
 
     if ( 'delete' == $action ) {
         if ( ! empty( $_POST['post_ID'] ) ) {
+            $_POST['post_ID'] = (int)$_POST['post_ID'];
             check_admin_referer( 'kiwi-delete-contact-form_' . $_POST['post_ID'] );
         } elseif ( ! is_array( $_REQUEST['post'] ) ) {
+            $_REQUEST['post'] = (int)$_REQUEST['post'];
             check_admin_referer( 'kiwi-delete-contact-form_' . $_REQUEST['post'] );
         } else {
             check_admin_referer( 'bulk-posts' );
@@ -424,7 +426,7 @@ function kiwi_cf_admin_add_new_page() {
 
 function kiwi_cf_load_integration_page() {
     do_action( 'kiwi_cf_admin_load',
-        isset( $_GET['page'] ) ? trim( $_GET['page'] ) : '',
+        isset( $_GET['page'] ) ? sanitize_text_field( trim( $_GET['page'] ) ) : '',
         kiwi_cf_current_action()
     );
 
@@ -597,4 +599,46 @@ function kiwi_cf_not_allowed_to_edit( $page, $action, $object ) {
     echo sprintf(
         '<div class="notice notice-warning"><p>%s</p></div>',
         esc_html( $message ) );
+}
+
+function kiwi_cf_sanitize_array($array = array(), $sanitize_rule = array()) {
+    if ( !is_array($array) || count($array) == 0 ) {
+        return array();
+    }
+
+    foreach ( $array as $k => $v ) {
+        if ( !is_array($v) ) {
+            if (is_email($v)) {
+                $default_sanitize_rule = 'email';
+            } elseif ($v != strip_tags($v)) {
+                $default_sanitize_rule = 'html';
+            } elseif (is_numeric($v)) {
+                $default_sanitize_rule = 'number';
+            } else {
+                $default_sanitize_rule = 'text';
+            }
+
+            $sanitize_type = isset($sanitize_rule[ $k ]) ? $sanitize_rule[ $k ] : $default_sanitize_rule;
+            $array[ $k ] = kiwi_cf_sanitize_value($v, $sanitize_type);
+        }
+        if ( is_array($v) ) {
+            $array[ $k ] = kiwi_cf_sanitize_array($v, $sanitize_rule);
+        }
+    }
+
+    return $array;
+}
+
+function kiwi_cf_sanitize_value($value = '', $sanitize_type = 'text') {
+    switch ( $sanitize_type ) {
+        case 'html':
+            return $value;
+            break;
+        case 'email':
+            return sanitize_email($value);
+            break;
+        case 'text':
+            return sanitize_text_field($value);
+            break;
+    }
 }

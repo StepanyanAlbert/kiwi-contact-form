@@ -319,7 +319,7 @@ class KiwiCfMailTaggedText {
 		if ( null !== $submitted ) {
 
 			if ( $mail_tag->get_option( 'do_not_heat' ) ) {
-				$submitted = isset( $_POST[$field_name] ) ? $_POST[$field_name] : '';
+				$submitted = isset( $_POST[$field_name] ) ? sanitize_text_field ( $_POST[$field_name] ) : '';
 			}
 
 			$replaced = $submitted;

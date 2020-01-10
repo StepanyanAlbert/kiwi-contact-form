@@ -92,7 +92,7 @@ function kiwi_cf_quiz_validation_filter( $result, $tag ) {
 	$answer_hash = wp_hash( $answer, 'kiwi_cf_quiz' );
 
 	$expected_hash = isset( $_POST['_kiwi_cf_quiz_answer_' . $name] )
-		? (string) $_POST['_kiwi_cf_quiz_answer_' . $name]
+		? sanitize_text_field( (string) $_POST['_kiwi_cf_quiz_answer_' . $name] )
 		: '';
 
 	if ( $answer_hash != $expected_hash ) {

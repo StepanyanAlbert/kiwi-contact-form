@@ -91,7 +91,7 @@ function kiwi_cf_date_validation_filter( $result, $tag ) {
 	$max = $tag->get_date_option( 'max' );
 
 	$value = isset( $_POST[$name] )
-		? trim( strtr( (string) $_POST[$name], "\n", " " ) )
+		? sanitize_text_field ( trim( strtr( (string) $_POST[$name], "\n", " " ) ) )
 		: '';
 
 	if ( $tag->is_required() and '' == $value ) {

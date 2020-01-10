@@ -188,8 +188,8 @@ class kiwi_CF_ConstantContact extends Kiwi_CF_Service_OAuth2 {
 	}
 
 	public function auth_redirect() {
-		$auth = isset( $_GET['auth'] ) ? trim( $_GET['auth'] ) : '';
-		$code = isset( $_GET['code'] ) ? trim( $_GET['code'] ) : '';
+		$auth = isset( $_GET['auth'] ) ? sanitize_text_field( trim( $_GET['auth'] ) ) : '';
+		$code = isset( $_GET['code'] ) ? sanitize_text_field( trim( $_GET['code'] ) ) : '';
 
 		if ( self::service_name === $auth and $code
 		and current_user_can( 'kiwi_cf_manage_integration' ) ) {
@@ -277,10 +277,10 @@ class kiwi_CF_ConstantContact extends Kiwi_CF_Service_OAuth2 {
 				$this->reset_data();
 			} else {
 				$this->client_id = isset( $_POST['client_id'] )
-					? trim( $_POST['client_id'] ) : '';
+					? sanitize_text_field( trim( $_POST['client_id'] ) ) : '';
 
 				$this->client_secret = isset( $_POST['client_secret'] )
-					? trim( $_POST['client_secret'] ) : '';
+					? sanitize_text_field( trim( $_POST['client_secret'] ) ) : '';
 
 				$this->save_data();
 				$this->authorize( 'contact_data' );
@@ -293,8 +293,8 @@ class kiwi_CF_ConstantContact extends Kiwi_CF_Service_OAuth2 {
 		if ( 'edit' == $action and 'POST' == $_SERVER['REQUEST_METHOD'] ) {
 			check_admin_referer( 'kiwi-constant-contact-edit' );
 
-			$list_ids = isset( $_POST['contact_lists'] )
-				? (array) $_POST['contact_lists']
+			$list_ids = isset( $_POST['contact_lists'] ) || !empty( $_POST['contact_lists'] )
+				? (array) kiwi_cf_sanitize_array( $_POST['contact_lists'] )
 				: array();
 
 			$this->update_contact_lists( array( 'default' => $list_ids ) );
