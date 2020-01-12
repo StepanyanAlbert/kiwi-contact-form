@@ -92,7 +92,7 @@ function kiwi_cf_textarea_validation_filter( $result, $tag ) {
 	$type = $tag->type;
 	$name = $tag->name;
 
-	$value = isset( $_POST[$name] ) ? (string) $_POST[$name] : '';
+	$value = isset( $_POST[$name] ) ? sanitize_text_field( (string) $_POST[$name] ) : '';
 
 	if ( $tag->is_required() and '' == $value ) {
 		$result->invalidate( $tag, kiwi_cf_get_message( 'invalid_required' ) );

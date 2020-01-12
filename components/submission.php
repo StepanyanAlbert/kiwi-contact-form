@@ -172,7 +172,7 @@ class Kiwi_CF_Submission {
 			'url' => $this->get_request_url(),
 			'timestamp' => current_time( 'timestamp' ),
 			'unit_tag' =>
-				isset( $_POST['_kiwi_cf_unit_tag'] ) ? $_POST['_kiwi_cf_unit_tag'] : '',
+				isset( $_POST['_kiwi_cf_unit_tag'] ) ? sanitize_text_field( $_POST['_kiwi_cf_unit_tag'] ) : '',
 			'container_post_id' => isset( $_POST['_kiwi_cf_container_post'] )
 				? (int) $_POST['_kiwi_cf_container_post'] : 0,
 			'current_user_id' => get_current_user_id(),

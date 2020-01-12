@@ -58,10 +58,22 @@ require_once KIWI_CF_PLUGIN_DIR . '/components/form-tags-manager.php';
 
 
 function kiwi_cf_admin_styles_and_scripts() {
-    wp_enqueue_script('boot3', '/wp-content/plugins/kiwi-contact-form/admin/views/js/popper.min.js', ['jquery'], '', true);
-    wp_enqueue_script('boot4', '/wp-content/plugins/kiwi-contact-form/admin/views/js/bootstrap.min.js', ['jquery'], '', true);
-    wp_enqueue_style('bootstrap4', '/wp-content/plugins/kiwi-contact-form/admin/views/css/bootstrap.min.css');
+    wp_enqueue_style( 'bootstrap4',
+        kiwi_cf_plugin_url( 'admin/views/css/bootstrap.min.css' ),
+        array(), KIWI_CF_VERSION, 'all'
+    );
+    wp_enqueue_script( 'boot3',
+        kiwi_cf_plugin_url( 'admin/views/js/popper.min.js' ),
+        array( 'jquery' ),
+        KIWI_CF_VERSION, true
+    );
+    wp_enqueue_script( 'boot4',
+        kiwi_cf_plugin_url( '/admin/views/js/bootstrap.min.js' ),
+        array( 'jquery' ),
+        KIWI_CF_VERSION, true
+    );
 }
+
 add_action( 'admin_enqueue_scripts', 'kiwi_cf_admin_styles_and_scripts' );
 
 if ( is_admin() ) {

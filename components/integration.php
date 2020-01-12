@@ -169,7 +169,7 @@ class Kiwi_CF_Service_OAuth2 extends Kiwi_CF_Service {
 
 	public function load( $action = '' ) {
 		if ( 'auth_redirect' == $action ) {
-			$code = isset( $_GET['code'] ) ? $_GET['code'] : '';
+			$code = isset( $_GET['code'] ) ? sanitize_text_field( $_GET['code'] ) : '';
 
 			if ( $code ) {
 				$this->request_token( $code );
