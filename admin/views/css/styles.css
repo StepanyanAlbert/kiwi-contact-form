@@ -368,3 +368,45 @@ ul.config-error li {
 .card .checkboxes li {
 	margin: 0;
 }
+
+#drag-and-drop-form {
+	border: 2px dashed #ffc107;
+	padding: 20px
+}
+
+#drag-and-drop-form .form-group:hover {
+	border: 1px dashed #ffc107;
+	cursor: pointer;
+}
+
+#drag-and-drop-form .form-group {
+	padding: 10px;
+	border: 1px solid transparent;
+	cursor: pointer;
+}
+
+
+
+.drag-area {
+	vertical-align: top;
+	position: relative;
+}
+.area {
+	position:absolute;
+	margin: 0 auto;
+	color: #ccc;
+	font-size: 20px;
+	bottom: 10px;
+	left: 20px;
+}
+.box {
+	z-index: 2;
+}
+.result {
+	display: inline-block;
+	margin-left: 30px;
+}
+
+#drag-and-drop-form label {
+	color: #525151;
+}

@@ -288,4 +288,51 @@
 		return url;
 	};
 
+	$( ".box" ).draggable({
+		scope: 'demoBox',
+		revertDuration: 100,
+		start: function( event, ui ) {
+			//Reset
+			$( ".box" ).draggable( "option", "revert", true );
+			$('.result').html('-');
+		}
+	});
+
+	$( ".drag-area" ).droppable({
+		scope: 'demoBox',
+		drop: function( event, ui ) {
+			$( ".box" ).draggable( "option", "revert", false );
+			$(ui.draggable).detach().css({top: 0,left: 0}).appendTo(this);
+
+			kiwi.changeForm()
+		}
+
+	});
+
+	kiwi.changeForm = function() {
+		let html = '';
+		$('#drag-and-drop-form .box').each(function () {
+
+			let name = $(this).find('input').attr('name'),
+				value = $(this).find('input').val();
+
+			if (name === 'your-name') {
+				html += ' <label> '+value+' [text* your-name] '+'</label>'
+			} else if(name === 'your-email') {
+				html += ' <label> '+value+' [email* your-email] '+'</label>'
+			} else if(name === 'your-subject') {
+				html += ' <label> '+value+' [text your-subject] '+'</label>'
+			} else if ($(this).find('textarea').attr('name') === 'your-message') {
+				html += ' <label> '+ $(this).find('textarea').val()+' [textarea* your-message] '+'</label>'
+			}
+
+		});
+
+		html += ' [submit "Send"]';
+		$('#kiwi-form').text(html)
+	};
+
+	kiwi.insertInTextarea = function() {
+		kiwi.changeForm()
+	}
 } )( jQuery );

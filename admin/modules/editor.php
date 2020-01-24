@@ -63,14 +63,68 @@ function kiwi_cf_editor_panel_form( $post ) {
 
     <fieldset>
         <legend><?php echo $description; ?></legend>
-
         <?php
         $tag_generator = KiwiCfTagGenerator::get_instance();
         $tag_generator->print_buttons();
-        ?>
 
-        <textarea id="kiwi-form" name="kiwi-form" cols="100" rows="24" class="large-text code" data-config-field="form.body"><?php echo esc_textarea( $post->prop( 'form' ) ); ?></textarea>
+        preg_match_all ( '#<label>(.+?)</label>#', $post->prop( 'form' ), $parsed_textarea );
+        if (empty($parsed_textarea[0])) {
+            ?>
+            <div id="drag-and-drop-form" class="drag-area">
+                <form>
+                    <div class="form-group box">
+                        <label for="inputName">Your Name</label>
+                        <input type="text" class="form-control" id="inputName" onkeyup="kiwi.insertInTextarea()" name="your-name" value="Your Name (required)">
+                    </div>
+                    <div class="form-group box">
+                        <label for="inputName">Your Email</label>
+                        <input type="text" class="form-control" id="inputName" onkeyup="kiwi.insertInTextarea()" name="your-email" value="Your Email (required)">
+                    </div>
+                    <div class="form-group box">
+                        <label for="inputName">Subject</label>
+                        <input type="text" class="form-control" id="inputName" onkeyup="kiwi.insertInTextarea()" name="your-subject" value="Subject">
+                    </div>
+                    <div class="form-group box">
+                        <label for="exampleFormControlMessage">Message</label>
+                        <textarea class="form-control" id="exampleFormControlMessage"  onkeyup="kiwi.insertInTextarea()" name="your-message" rows="3">Message</textarea>
+                    </div>
+                </form>
+            </div>
+            <textarea hidden id="kiwi-form"  name="kiwi-form" cols="100" rows="24" class="large-text code" data-config-field="form.body"><?php echo esc_textarea( $post->prop( 'form' ) ); ?></textarea>
+            <?php
+        } else {
+            ?>
+            <div id="drag-and-drop-form" class="drag-area">
+                <form>
+                    <?php
+                    foreach ($parsed_textarea[0] as $parsed_item) {
+                        $exploded_item = explode('[', $parsed_item);
+                        preg_match('~ (.*?)]~', $exploded_item[1], $output);
+                        $name = ucfirst(str_replace('your-', '', $output[1]));
+
+                        if ($output[1] == 'your-message') {
+                            ?>
+                            <div class="form-group box">
+                                <label for="exampleFormControlMessage"><?php echo $name; ?></label>
+                                <textarea class="form-control" id="exampleFormControlMessage"  onkeyup="kiwi.insertInTextarea()" name="<?php echo $output[1] ?>" rows="3"><?php echo strip_tags($exploded_item[0]) ?></textarea>
+                            </div>
+                            <?php
+                        } else {
+                            ?>
+                            <div class="form-group box">
+                                <label for="inputName"><?php echo $name ?></label>
+                                <input type="text" class="form-control" id="inputName" onkeyup="kiwi.insertInTextarea()" name="<?php echo $output[1] ?>" value="<?php echo strip_tags($exploded_item[0]) ?>">
+                            </div>
+                            <?php
+                        }
+                    }
+                    ?>
+                </form>
+            </div>
+            <textarea hidden id="kiwi-form"  name="kiwi-form" cols="100" rows="24" class="large-text code" data-config-field="form.body"><?php echo esc_textarea( $post->prop( 'form' ) ); ?></textarea>
+        <?php } ?>
     </fieldset>
+
     <?php
 }
 
