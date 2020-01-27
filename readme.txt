@@ -67,6 +67,9 @@ You will find 'Kiwi Contact' menu in your WordPress admin panel.
 * New filter hooks: kiwi_cf_upload_file_name, kiwi_cf_autop_or_not, kiwi_cf_posted_data_{$type}, and kiwi_cf_mail_tag_replaced_{$type}
 * New form-tag features: zero-controls-container and not-for-mail
 
+= 1.0.2 =
+* Fixed bug with adding field
+
 == FAQ ==
 
 1. Where is the settings page for Kiwi Contact Form ?

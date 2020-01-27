@@ -137,7 +137,7 @@ function kiwi_cf_admin_enqueue_scripts( $hook_suffix ) {
     add_thickbox();
 
     wp_enqueue_script( 'kiwi-admin-taggenerator',
-        kiwi_cf_plugin_url( 'admin/js/tag-generator.js' ),
+        kiwi_cf_plugin_url( 'admin/views/js/tag-generator.js' ),
         array( 'jquery', 'thickbox', 'kiwi-admin' ), KIWI_CF_VERSION, true );
 }
 
