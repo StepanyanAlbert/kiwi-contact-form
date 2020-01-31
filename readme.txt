@@ -1,6 +1,6 @@
 === Kiwi Contact Form ===
-
-Tags: contact, form, contact form, feedback, email, ajax, captcha, akismet, multilingual
+Contributors: Kiwi Science,Kiwi Plugins
+Tags: contact, form, contact form, feedback, email, ajax, captcha, akismet, multilingual, forms, contact forms, custom form, form builder, form manager, form kiwi, forms builder, form builder wordpress
 Requires at least: 4.7
 Tested up to: 5.3.2
 Stable tag: 5.3.2
@@ -72,39 +72,56 @@ You will find 'Kiwi Contact' menu in your WordPress admin panel.
 
 == FAQ ==
 
-1. Where is the settings page for Kiwi Contact Form ?
-    Log into WordPress and open Contact > Contact Forms.
+= Where is the settings page for Kiwi Contact Form ? =
 
-2. How can I add a field to my contact form ?
-    Insert a form-tag into the Form tab panel field. Kiwi Contact Form allows you to edit the templates of your contact forms and your mail (mail headers and message body) with various “tags.”
-    In the terminology for Kiwi Contact Form, tag means a tiny formed string of type enclosed in square brackets ([ ]).
+Log into WordPress and open Contact > Contact Forms.
 
-3. Can I see the messages submitted through the contact form ?
-    Kiwi Contact Form doesn’t save the submitted messages.
+= How can I add a field to my contact form ? =
 
-4. Can I implement autoresponder ?
-    Yes, of course. Simply check the “Use mail (2)” box in the Mail tab panel and set up Mail (2) as the template for autoresponder mail.
-    Mail (2) is an additional mail template which works in the same way as the primary Mail template,
-    but Mail (2) is sent only when Mail has been sent successfully.
+Insert a form-tag into the Form tab panel field. Kiwi Contact Form allows you to edit the templates of your contact forms and your mail (mail headers and message body) with various “tags.”
 
-5. Can I place a contact form outside a post ?
-    Yes. You may place a contact form in a text widget as well.
+In the terminology for Kiwi Contact Form, tag means a tiny formed string of type enclosed in square brackets ([ ]).
 
-6. I get an error message with a red border. So, how can I solve this ?
-    The red border means that Kiwi Contact Form tried to send mail with wp_mail(), but it failed. To solve the issue, you need to find out the actual reason why it is failing in the first place.
-    There could be various reasons such as the mail setup wasn’t valid.
-    The sending would also fail if the mail server was down, inaccessible or experiencing other problems.
+= Can I see the messages submitted through the contact form ? =
 
-7. I want to use contact form in my language, not in English. How can I do that ?
-    Kiwi Contact Form has not YET been translated into other languages.
+Kiwi Contact Form doesn’t save the submitted messages.
 
-8. CAPTCHA does not work; the image does not show up. What am I supposed to do ?
-    To use CAPTCHA, you need GD and FreeType library installed on your server. Also, make sure that CAPTCHA’s temporary folder is writable.
+= Can I implement autoresponder ? =
 
-9. How can I export/import contact form data ?
-    You can export and import form data via Tools > Export (https://codex.wordpress.org/Tools_Export_Screen) and Tools > Import (https://codex.wordpress.org/Tools_Import_Screen)in the WordPress admin screen.
+Yes, of course. Simply check the “Use mail (2)” box in the Mail tab panel and set up Mail (2) as the template for autoresponder mail.
 
-10. I get spam messages through my contact forms. How can I stop them ?
-     You can protect your contact forms with the anti-spam features that Kiwi Contact Form provides.
-     Kiwi Contact Form supports spam-filtering with Akismet.
-     Another one is reCAPTCHA which protects you against spam and other types of automated abuse.
+Mail (2) is an additional mail template which works in the same way as the primary Mail template,
+
+but Mail (2) is sent only when Mail has been sent successfully.
+
+= Can I place a contact form outside a post ? =
+
+Yes. You may place a contact form in a text widget as well.
+
+= I get an error message with a red border. So, how can I solve this ? =
+
+The red border means that Kiwi Contact Form tried to send mail with wp_mail(), but it failed. To solve the issue, you need to find out the actual reason why it is failing in the first place.
+
+There could be various reasons such as the mail setup wasn’t valid.
+
+The sending would also fail if the mail server was down, inaccessible or experiencing other problems.
+
+= I want to use contact form in my language, not in English. How can I do that ? =
+
+Kiwi Contact Form has not YET been translated into other languages.
+
+= CAPTCHA does not work; the image does not show up. What am I supposed to do ? =
+
+To use CAPTCHA, you need GD and FreeType library installed on your server. Also, make sure that CAPTCHA’s temporary folder is writable.
+
+= How can I export/import contact form data ? =
+
+You can export and import form data via Tools > [Export](https://codex.wordpress.org/Tools_Export_Screen) and Tools > [Import](https://codex.wordpress.org/Tools_Import_Screen)in the WordPress admin screen.
+
+= I get spam messages through my contact forms. How can I stop them ? =
+
+You can protect your contact forms with the anti-spam features that Kiwi Contact Form provides.
+
+Kiwi Contact Form supports spam-filtering with Akismet.
+
+Another one is reCAPTCHA which protects you against spam and other types of automated abuse.
