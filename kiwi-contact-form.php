@@ -67,8 +67,26 @@ function kiwi_cf_admin_styles_and_scripts() {
         array( 'jquery' ),
         KIWI_CF_VERSION, true
     );
+
+    wp_enqueue_script( 'jquery-ui',
+        kiwi_cf_plugin_url( 'admin/views/js/jquery-ui.min.js' ),
+        array( 'jquery' ),
+        KIWI_CF_VERSION, true
+    );
+
     wp_enqueue_script( 'boot4',
         kiwi_cf_plugin_url( '/admin/views/js/bootstrap.min.js' ),
+        array( 'jquery' ),
+        KIWI_CF_VERSION, true
+    );
+
+    wp_enqueue_style( 'fontawesome_css',
+        kiwi_cf_plugin_url( 'admin/views/css/fontawesome.min.css' ),
+        array(), KIWI_CF_VERSION, 'all'
+    );
+
+    wp_enqueue_script( 'fontawesome_js',
+        kiwi_cf_plugin_url( '/admin/views/js/fontawesome.min.js' ),
         array( 'jquery' ),
         KIWI_CF_VERSION, true
     );

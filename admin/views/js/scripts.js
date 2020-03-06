@@ -288,4 +288,238 @@
 		return url;
 	};
 
+	// $( ".box" ).draggable({
+	// 	scope: 'demoBox',
+	// 	revertDuration: 100,
+	// 	start: function( event, ui ) {
+	// 		//Reset
+	// 		$( ".box" ).draggable( "option", "revert", true );
+	// 		$('.result').html('-');
+	// 	}
+	// });
+
+	//todo
+	$( "#selectable-input-group" ).sortable({
+		update: function( event, ui ) {
+			kiwi.changeForm()
+		}
+	});
+
+	$( "#selectable-input-group-default" ).sortable({
+		update: function( event, ui ) {
+			kiwi.changeForm()
+		}
+	});
+
+    $( "#testdiv" ).resizable({
+        grid: [ 20, 10 ]
+    });
+
+	// $( ".drag-area" ).droppable({
+	// 	scope: 'demoBox',
+	// 	drop: function( event, ui ) {
+	// 		$( ".box" ).draggable( "option", "revert", false );
+	// 		$(ui.draggable).detach().css({top: 0,left: 0}).appendTo(this);
+    //
+	// 		kiwi.changeForm()
+	// 	}
+    //
+	// });
+
+
+	kiwi.changeForm = function() {
+		let html = '';
+		if ( $('#selectable-input-group li .box').length ) {
+
+			$('#selectable-input-group li .box').each(function () {
+
+				let shortcode = $(this).find('.form-control').attr('shortcode'),
+					value = $(this).find('.form-control').val();
+
+				// For Checkboxes and selects
+				if ($(this).find('.form-control').length > 1) {
+					shortcode = $(this).find('.form-control').first().attr('shortcode');
+					value = $(this).find('.form-control').first().val();
+				}
+
+				if (value === '') {
+					shortcode = shortcode.replace(/ ".*"/, '');
+				} else if (/ ".*"/.test(shortcode)) {
+					shortcode = shortcode.replace(/ ".*"/, ` "${value}"`);
+				} else {
+					shortcode = shortcode.substring(0, shortcode.length - 1) + ` "${value}"` + ']';
+				}
+
+				html += shortcode;
+			});
+		} else {
+			$('#selectable-input-group-default li .box').each(function () {
+				let shortcode = $(this).find('.form-control').attr('shortcode'),
+					value = $(this).find('.form-control').val();
+
+				// if (name === 'your-name') {
+				// 	html += ' <label> ' + value + ' [text* your-name] ' + '</label>'
+				// } else if (name === 'your-email') {
+				// 	html += ' <label> ' + value + ' [email* your-email] ' + '</label>'
+				// } else if (name === 'your-subject') {
+				// 	html += ' <label> ' + value + ' [text your-subject] ' + '</label>'
+				// } else if ($(this).find('textarea').attr('shortcode') === 'your-message') {
+				// 	html += ' <label> ' + $(this).find('textarea').val() + ' [textarea* your-message] ' + '</label>'
+				// }
+
+				if (value === '') {
+					shortcode = shortcode.replace(/ ".*"/, '');
+				} else if (/ ".*"/.test(shortcode)) {
+					shortcode = shortcode.replace(/ ".*"/, ` "${value}"`);
+				} else {
+					shortcode = shortcode.substring(0, shortcode.length - 1) + ` "${value}"` + ']';
+				}
+
+				html += shortcode;
+
+			});
+		}
+
+		html += ' [submit "Send"]';
+		$('#kiwi-form').text(html)
+	};
+
+	// kiwi.changeForm()
+
+	kiwi.insertInTextarea = function() {
+		kiwi.changeForm()
+	};
+
+	// EDIT
+	$(document).on('click', '.field-edit-btn',  function() {
+
+		const edit_block = $(this).parent().parent();
+		const shortcode = edit_block.find('.form-control').attr('shortcode');
+		const matchedLabel = shortcode.match(/label:"([^"]+)"/);
+		const label = matchedLabel ? matchedLabel[1] : '';
+
+		$("#delete-field-modal").attr('data-field', shortcode );
+		$('.edit-modal-label-input').val(label)
+		$("#edit-field-modal").modal();
+
+	});
+
+	// On click edit modal save button.
+	$(document).on('click', '.field-edit-modal-save-btn',  function() {
+		let kiwi_form_html   = $('#kiwi-form').text();
+		const edit_shortcode = $("#delete-field-modal").attr('data-field');
+		const new_label      = $('.edit-modal-label-input').val();
+		let new_shortcode;
+
+		if (new_label) {
+			if (edit_shortcode.match(/label:"([^"]+)"/)) {
+				new_shortcode = edit_shortcode
+					.replace(/label:"[^"]+"/, `label:"${new_label}"`);
+			} else {
+				new_shortcode = edit_shortcode.substring(0, edit_shortcode.length - 1) +
+					`label:"${new_label}"` + ']';
+			}
+		} else {
+			new_shortcode = edit_shortcode
+				.replace(/label:"[^"]+"/, '');
+		}
+
+		// update shortcode attr in selected field
+		$(".form-control[shortcode = '" + edit_shortcode + "' ]")
+			.attr('shortcode', new_shortcode);
+
+		const x = $(".form-control[shortcode = '" + edit_shortcode + "' ]")
+			.parent()
+
+
+
+		console.log(x);
+
+
+		const insert_index = kiwi_form_html.indexOf(edit_shortcode);
+		kiwi_form_html =
+			kiwi_form_html.substring(0, insert_index) +
+			  new_shortcode +
+			kiwi_form_html.substring(insert_index + edit_shortcode.length, kiwi_form_html.length);
+
+		$('#kiwi-form').text(kiwi_form_html);
+		$("#edit-field-modal").modal("hide")
+	});
+
+
+	// DELETE
+	$(document).on('click', '.field-delete-btn',  function() {
+			const delete_block = $(this).parent().parent();
+			const shortcode = delete_block.find('.form-control').attr('shortcode');
+			$("#delete-field-modal").attr('data-field', shortcode );
+			$("#delete-field-modal").modal();
+	});
+
+	// On click delete modal save button.
+	$(document).on('click', '.field-delete-modal-btn',  function() {
+		const kiwi_form_html = $('#kiwi-form').text();
+		const delete_filed_shortcode = $("#delete-field-modal").attr('data-field');
+		$(`[shortcode='${delete_filed_shortcode}']`).parent().parent().remove();
+		$('#kiwi-form').text(kiwi_form_html.replace(delete_filed_shortcode, ''));
+		$("#delete-field-modal").modal("hide")
+		kiwi.changeForm()
+	});
+
+	function generate_copy_filed_label(shortcode, label_from_html) {
+		const all_shortcodes = $('#kiwi-form').text();
+		const label_from_shortcode = shortcode.match(/label:"([^"]+)"/);
+		const field = shortcode.match(/^([[\w\*?\-]+)/)[1];
+		let label = label_from_html;
+
+		if (null !== label_from_shortcode) {
+			label = label_from_shortcode[1];
+		}
+
+		const label_name = label.match(/(^.*?) \(/);
+		 if (label_name) {
+		 	label = label_name[1];
+		 }
+
+		const reg =  new RegExp('\\' + field, 'g');
+        const count = (all_shortcodes.match(reg) || []).length;
+		if ( count === 0 ) {
+            return label;
+        }
+
+		if ( count === 1 ) {
+			return `${label} (1)`;
+		}
+		return `${label} (${count})`;
+
+	}
+
+	$(document).on('click', '.field-copy-btn',  function() {
+		let _parent = $(this).parent().parent().parent();
+		let copy_block = _parent.clone();
+		let new_shortcode = $(this).parent().parent().find('.form-control').attr('shortcode');
+
+		// const id_copy = 'copy:' + (new Date()).getMilliseconds() + Math.floor(Math.random() * 1000);
+		// let new_shortcode = old_shortcode.substring(0, old_shortcode.length - 1) + ' ' + id_copy + ']';
+
+		let label = copy_block.find('label').text();
+        const new_label = generate_copy_filed_label(new_shortcode, label);
+        if (new_shortcode.match(/label:"[^"]+"/)) {
+			new_shortcode = new_shortcode.replace(/label:"[^"]+"/, `label:"${new_label}"`);
+        } else {
+            new_shortcode = new_shortcode.substring(0, new_shortcode.length - 1) + `label:"${new_label}"` + ']';
+        }
+
+        copy_block.find('label').text(new_label);
+
+		copy_block.find('.form-control').attr('shortcode', new_shortcode );
+		_parent.after(copy_block);
+
+		let kiwi_form_html = $('#kiwi-form').text();
+		const insert_index = kiwi_form_html.indexOf(name) + name.length;
+		kiwi_form_html = kiwi_form_html.substring(0, insert_index) + new_shortcode + kiwi_form_html.substring(insert_index);
+		$('#kiwi-form').text(kiwi_form_html)
+
+	});
+
+
 } )( jQuery );

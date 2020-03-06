@@ -63,15 +63,486 @@ function kiwi_cf_editor_panel_form( $post ) {
 
     <fieldset>
         <legend><?php echo $description; ?></legend>
-
         <?php
         $tag_generator = KiwiCfTagGenerator::get_instance();
         $tag_generator->print_buttons();
-        ?>
 
-        <textarea id="kiwi-form" name="kiwi-form" cols="100" rows="24" class="large-text code" data-config-field="form.body"><?php echo esc_textarea( $post->prop( 'form' ) ); ?></textarea>
+        preg_match_all ( "/\[[^\]]*\]/", $post->prop( 'form' ), $parsed_textarea );
+        //var_dump($post->prop('form'), '<pre />', $parsed_textarea);
+        if (empty($parsed_textarea[0])) {
+            ?>
+            <div id="drag-and-drop-form" class="drag-area">
+                <form>
+                    <ul id="selectable-input-group-default">
+                        <li>
+                            <div class="form-group box">
+                                <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                    <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                </div>
+                                <label for="inputName">Your Name</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="inputName"
+                                       onkeyup="kiwi.insertInTextarea()"
+                                       shortcode='[text* your-name label:"Your Name (required)" ]'
+                                       name="your-name"
+                                       value="Your Name (required)">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form-group box">
+                                <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                    <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                </div>
+                                <label for="inputName">Your Email</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="inputName"
+                                       onkeyup="kiwi.insertInTextarea()"
+                                       name="your-email"
+                                       shortcode='[text* your-email label:"Your Email (required)" ]'
+                                       value="Your Email (required)">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form-group box">
+                                <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                    <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                </div>
+                                <label for="inputName">Subject</label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="inputName"
+                                       onkeyup="kiwi.insertInTextarea()"
+                                       name="your-subject"
+                                       shortcode='[text your-subject label:"Subject" ]'
+                                       value="Subject">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form-group box">
+                                <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                    <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                </div>
+                                <label for="exampleFormControlMessage">Message</label>
+                                <textarea class="form-control"
+                                          readonly
+                                          id="exampleFormControlMessage"
+                                          onkeyup="kiwi.insertInTextarea()"
+                                          name="your-message"
+                                          shortcode='[textarea* your-message label:"Message" ]'
+                                          rows="3">Message</textarea>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+            <textarea id="kiwi-form"
+                      name="kiwi-form"
+                      cols="100" rows="3"
+                      class="large-text code"
+                      data-config-field="form.body">
+                <?php echo esc_textarea( $post->prop( 'form' ) ); ?>
+            </textarea>
+            <?php
+        } else {
+            ?>
+            <div id="drag-and-drop-form" class="drag-area">
+                <form>
+                    <ul id="selectable-input-group">
+                    <?php
+                    foreach ($parsed_textarea[0] as $parsed_item) {
+                         $exported_item = substr($parsed_item, 1, -1);
+
+                        // Input label
+                        preg_match('/label:"([^"]+)"/', $exported_item, $input_label);
+                        if ( !empty($input_label)) {
+                            $label =  trim($input_label[1]);
+                        } else {
+                            $label = '';
+                        }
+
+
+                         // Input type (name)
+                         preg_match('/^([\w\*?\-]+)/', $exported_item, $input_name);
+                         if ( substr($input_name[0], -1) === "*" ) {
+                             $input_name =  trim($input_name[0], "*");
+                             $required = 'required';
+                         } else {
+                             $input_name = $input_name[0];
+                             $required = '';
+                         }
+
+                         // Default values
+                         preg_match_all('/ "(.*?)"/', $exported_item, $values);
+                        if (!empty($values[1])) {
+                            if (count($values[1]) === 1) {
+                                    $value = trim($values[1][0]);
+                            } else {
+                                    $value = array_map(function($val){ return trim($val); }, $values[1]);
+                            }
+                        } else {
+                            $value = '';
+                        }
+
+
+                         // If Placeholder exists
+                         if ( preg_match('/placeholder/', $exported_item) ) {
+                             $placeholder = "placeholder='$value'";
+                             $value = '';
+                         } else {
+                             $placeholder = "";
+                         }
+
+                         // Id
+                         preg_match('/id:([\w\-]+)/', $exported_item, $id);
+                         $id =  !empty ( $id ) ? $id[1] : '';
+
+                         // Classes
+                         preg_match_all('/class:([\w\-]+)/', $exported_item, $classes);
+                         $class =  !empty ( $classes ) ? join(" ", $classes[1]) : '';
+
+
+                         // Min Max
+                        preg_match('/min:([\d]+)/', $exported_item, $min);
+                        $min =  !empty ( $min ) ? $min[1] : '';
+
+                        preg_match('/max:([\d]+)/', $exported_item, $max);
+                        $max =  !empty ( $max ) ? $max[1] : '';
+
+                        if ( $input_name === 'textarea' ) {
+                            $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="exampleFormControlMessage"><?= $label ?></label>
+                                    <textarea id="<?= $id ?>"
+                                              class="<?= $class ?> form-control"
+                                              onkeyup="kiwi.insertInTextarea()"
+                                              shortcode='<?= $parsed_item ?>'
+                                              rows="3"
+                                              <?= $placeholder ?>
+                                    ><?= strip_tags($value) ?></textarea>
+                                </div>
+                            </li>
+                            <?php
+                        } else if ($input_name === 'acceptance' ) {
+                            $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputName"><?= $label ?></label>
+                                    <input type="checkbox"
+                                           checked="<?= strip_tags($value) ?>"
+                                           id="<?= $id ?> form-control"
+                                           class="<?= $class ?>"
+                                           shortcode='<?= $parsed_item ?>'
+                                    >
+                                    <span class="checkmark"></span>
+                                </div>
+                            </li>
+                            <?php
+                        } else if ( $input_name === 'date' ) {
+                           $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputName"><?= $label ?></label>
+                                    <input type="date"
+                                           class="<?= $class ?> form-control"
+                                           shortcode='<?= $parsed_item ?>'
+                                    >
+                                </div>
+                            </li>
+                            <?php
+                        } else if ( $input_name === 'range' ) {
+                            $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputName"><?= $label ?></label>
+                                    <input type="range"
+                                           min="<?= $min ?>"
+                                           max="<?= $max ?>"
+                                           class="<?= $class ?> form-control"
+                                           shortcode='<?= $parsed_item ?>'
+                                    >
+                                </div>
+                            </li>
+                            <?php
+                        }
+                        else if ( $input_name === 'radio' ) {
+                            $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputRadio"><?= $label ?></label>
+                                    <input type="radio"
+                                           shortcode='<?= $parsed_item ?>'
+                                           value="male"
+                                           id="<?= $id ?> inputRadio"
+                                           class="<?= $class ?> form-control"
+                                    >
+                                </div>
+                            </li>
+                            <?php
+                        } else if ( $input_name === 'checkbox' ) {
+                            $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputCheckbox"><?= $label ?></label>
+                                    <br>
+                                    <?php if ($value && is_array($value)) {
+                                        foreach ($value as $val ){
+                                            ?>
+                                            <br>
+                                            <input type="checkbox"
+                                                   id="<?= $id ?> "
+                                                   class="<?= $class ?> form-control"
+                                                   shortcode='<?= $parsed_item ?>'
+                                            >
+                                            <span class="checkmark"><?= $val ?></span>
+                                        <?php } } else {?>
+                                            <input type="checkbox"
+                                                   id="<?= $id ?> "
+                                                   class="<?= $class ?> form-control"
+                                                   shortcode='<?= $parsed_item ?>'
+                                            >
+                                            <span class="checkmark"><?= $value ?></span>
+
+                                        <?php }?>
+                                </div>
+                            </li>
+                            <?php
+                        } else if ( $input_name ==='select' ) {
+                            $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputName"><?= $label ?></label>
+                                    <select
+                                            shortcode='<?= $parsed_item ?>'
+                                            class="<?= $class ?> form-control"
+                                            id="<? $id ?>"
+                                    >
+                                        <option value="volvo">Volvo</option>
+                                        <option value="saab">Saab</option>
+                                        <option value="mercedes">Mercedes</option>
+                                        <option value="audi">Audi</option>
+                                    </select>
+                                </div>
+                            </li>
+                            <?php
+                        } else if ( $input_name === 'quiz' ) {
+                            $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputName"><?= $label ?></label>
+                                    <input type="checkbox"
+                                           checked="checked"
+                                           id="<?= $id ?>"
+                                           shortcode='<?= $parsed_item ?>'
+                                           class="<?= $class ?> form-control">
+                                    <span class="checkmark"></span>
+                                </div>
+                            </li>
+                            <?php
+                        } else if ( $input_name === 'file' ) {
+                            $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputName"><?= $label ?></label>
+                                    <input type="file"
+                                           class="<?= $class ?> form-control"
+                                           id="<?= $id ?>"
+                                           onkeyup="kiwi.insertInTextarea()"
+                                           shortcode='<?= $parsed_item ?>'
+                                           value="<?= strip_tags($value) ?>"
+                                    >
+                                </div>
+                            </li>
+                            <?php
+                        } else if ( $input_name === 'number' ) {
+                            $label = $label ? $label : '';
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputName"><?= $label ?></label>
+                                    <input type="number"
+                                           class="<?= $class ?> form-control"
+                                           id="<?=  $id ?>"
+                                           min="<?= $min ?>"
+                                           max="<?= $max ?>"
+                                           onkeyup="kiwi.insertInTextarea()"
+                                           shortcode='<?= $parsed_item ?>'
+                                           value="<?= strip_tags($value) ?>"
+                                            <?= $placeholder ?>
+                                </div>
+                            </li>
+                            <?php
+                        } else if ( $input_name === '/' || $input_name === 'submit' ) {
+                            continue;
+                        } else {
+                            $label = $label ? $label : '';
+                            //preg_match('~(.*?)\[~', get_string_between($post->prop( 'form' ), '<label>',$parsed_item ), $res);
+                            ?>
+                            <li>
+                                <div class="form-group box">
+                                    <div class="field-actions">
+                                        <span class="field-edit-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-edit"></i>
+                                        </span>
+                                        <span class="field-copy-btn" data-toggle="tooltip" data-placement="top" title="Duplicate the field" >
+                                            <i class="fas fa-copy"></i>
+                                        </span>
+                                        <span class="field-delete-btn" data-toggle="tooltip" data-placement="top" title="Delete the field" >
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </div>
+                                    <label for="inputName"><?= $label ?></label>
+                                    <input type="text"
+                                           class="<?= $class ?> form-control"
+                                           id="<?= $id ?>"
+                                           onkeyup="kiwi.insertInTextarea()"
+                                           value="<?= strip_tags($value)  ?>"
+                                           shortcode='<?= $parsed_item ?>'
+                                           <?= $placeholder ?>
+                                    >
+                                </div>
+                            </li>
+                            <?php
+                            $res = [];
+                        }
+                    }
+                    ?>
+                    </ul>
+                </form>
+            </div>
+            <textarea  id="kiwi-form"
+                       name="kiwi-form"
+                       cols="100"
+                       rows="3"
+                       class="large-text code"
+                       data-config-field="form.body"
+            ><?php echo esc_textarea( $post->prop( 'form' ) ); ?>
+            </textarea>
+        <?php } ?>
     </fieldset>
     <?php
+    kiwi_cf_editor_delete_field_modal();
+    kiwi_cf_editor_edit_field_modal();
+}
+
+function get_string_between($string, $start, $end){
+    $string = ' ' . $string;
+    $ini = strpos($string, $start);
+    if ($ini == 0) return '';
+    $ini += strlen($start);
+    $len = strpos($string, $end, $ini) - $ini;
+    return substr($string, $ini, $len);
 }
 
 function kiwi_cf_editor_panel_mail( $post ) {
@@ -251,5 +722,62 @@ function kiwi_cf_editor_panel_additional_settings( $post ) {
         <legend><?php echo $description; ?></legend>
         <textarea id="kiwi-additional-settings" name="kiwi-additional-settings" cols="100" rows="8" class="large-text" data-config-field="additional_settings.body"><?php echo esc_textarea( $post->prop( 'additional_settings' ) ); ?></textarea>
     </fieldset>
+    <?php
+}
+
+function kiwi_cf_editor_delete_field_modal() {
+    ?>
+    <div class="modal fade" id="delete-field-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div>
+
+                        <h5 class="text-center  ">
+                            <div class="mb-3">
+                                <i class="fas fa-trash fa-2x "></i>
+                            </div>
+                           <p class=" h5">
+                               Are you sure you want to delete this field? <br>
+                            Your changes will be lost if you don't save them.
+                           </p>
+                        </h5>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger btn-sm field-delete-modal-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php
+}
+
+function kiwi_cf_editor_edit_field_modal() {
+    ?>
+    <div class="modal fade" id="edit-field-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body edit-field-modal-body">
+                    <h6 class="h5 text-info">Edit Field</h6>
+                        <table class="w-100 mt-5">
+                            <tbody>
+                            <tr>
+                                <td>Label</td>
+                                <td class="float-right">
+                                    <input class="edit-modal-label-input" type="text">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success btn-sm field-edit-modal-save-btn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <?php
 }

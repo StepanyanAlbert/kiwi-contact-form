@@ -174,27 +174,37 @@ function kiwi_cf_tag_generator_date( $contact_form, $args = '' ) {
 
 	<tr>
 	<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-values' ); ?>"><?php echo esc_html( __( 'Default value', 'kiwi-contact-form' ) ); ?></label></th>
-	<td><input type="text" name="values" class="oneline" id="<?php echo esc_attr( $args['content'] . '-values' ); ?>" /><br />
-	<label><input type="checkbox" name="placeholder" class="option" /> <?php echo esc_html( __( 'Use this text as the placeholder of the field', 'kiwi-contact-form' ) ); ?></label></td>
+	<td>
+        <input type="text" name="values" class="oneline" id="<?php echo esc_attr( $args['content'] . '-values' ); ?>" />
+        <br />
+        <label class="mt-2">
+            <input type="checkbox" name="placeholder" class="option" />
+            <?php echo esc_html( __( 'Use this text as the placeholder of the field', 'kiwi-contact-form' ) ); ?>
+        </label>
+    </td>
 	</tr>
 
-	<tr>
-	<th scope="row"><?php echo esc_html( __( 'Range', 'kiwi-contact-form' ) ); ?></th>
-	<td>
-		<fieldset>
-		<legend class="screen-reader-text"><?php echo esc_html( __( 'Range', 'kiwi-contact-form' ) ); ?></legend>
-		<label>
-		<?php echo esc_html( __( 'Min', 'kiwi-contact-form' ) ); ?>
-		<input type="date" name="min" class="date option" />
-		</label>
-		&ndash;
-		<label>
-		<?php echo esc_html( __( 'Max', 'kiwi-contact-form' ) ); ?>
-		<input type="date" name="max" class="date option" />
-		</label>
-		</fieldset>
-	</td>
-	</tr>
+    <tr>
+        <th scope="row">
+            <label for="<?php echo esc_attr( $args['content'] . '-values' ); ?>">
+                <?php echo esc_html( __( 'Start Date', 'kiwi-contact-form' ) ); ?>
+            </label>
+        </th>
+        <td>
+            <input type="date" name="min" class="date option" style="width: 200px" />
+        </td>
+    </tr>
+    <tr>
+        <th scope="row">
+            <label for="<?php echo esc_attr( $args['content'] . '-values' ); ?>">
+                <?php echo esc_html( __( 'End Date', 'kiwi-contact-form' ) ); ?>
+            </label>
+        </th>
+        <td>
+            <input type="date" name="max" class="date option" style="width: 200px" />
+        </td>
+    </tr>
+
 
 	<tr>
 	<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php echo esc_html( __( 'Id attribute', 'kiwi-contact-form' ) ); ?></label></th>
@@ -210,16 +220,16 @@ function kiwi_cf_tag_generator_date( $contact_form, $args = '' ) {
 </fieldset>
 </div>
 
-<div class="insert-box">
-	<input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
-
-	<div class="submitbox">
-	<input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr( __( 'Insert Tag', 'kiwi-contact-form' ) ); ?>" />
-	</div>
-
-	<br class="clear" />
-
-	<p class="description mail-tag"><label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'kiwi-contact-form' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?><input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>" /></label></p>
-</div>
+    <div>
+        <div class="insert-box-description">
+            <p class="description mail-tag"><label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'kiwi-contact-form' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?><input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>" /></label></p>
+        </div>
+        <div class="insert-box" style="display: flex; align-items: center">
+            <input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
+            <div class="submitbox">
+                <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr( __( 'Insert Tag', 'kiwi-contact-form' ) ); ?>" />
+            </div>
+        </div>
+    </div>
 <?php
 }

@@ -129,6 +129,13 @@
 			options.push( 'default:1' );
 		}
 
+		// Label
+		if ( scope.find( ':input[name="label"]' ).val() ) {
+			const label = scope.find( ':input[name="label"]' ).val();
+			options.push( 'label:"'+ label +'"' );
+		}
+
+
 		options = ( options.length > 0 ) ? options.join( ' ' ) : '';
 
 		var value = '';
@@ -161,6 +168,14 @@
 		if ( content ) {
 			components += ' ' + content + ' [/' + tagType + ']';
 		}
+
+		// // todo
+		// if ( scope.find( ':input[name="label"]' ).val() ) {
+		// 	var label = scope.find( ':input[name="label"]' ).val();
+		// 	label = $.trim( label );
+		// 	components = "<label>" + label +' ' + components + "</label>";
+		// }
+
 
 		return components;
 	};

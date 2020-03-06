@@ -162,6 +162,7 @@ ul.config-error li {
 	width: 120px;
 	padding: 4px 10px 4px 0;
 	font-size: 13px;
+	vertical-align: middle;
 }
 
 .tag-generator-panel table.form-table td {
@@ -367,4 +368,72 @@ ul.config-error li {
 
 .card .checkboxes li {
 	margin: 0;
+}
+
+#drag-and-drop-form {
+	border: 2px dashed #ffc107;
+	padding: 20px
+}
+
+#drag-and-drop-form .form-group:hover {
+	border: 1px dashed #ffc107;
+	cursor: pointer;
+}
+
+#drag-and-drop-form .form-group {
+	padding: 10px;
+	border: 1px solid transparent;
+	cursor: pointer;
+}
+
+
+
+.drag-area {
+	vertical-align: top;
+	position: relative;
+}
+.area {
+	position:absolute;
+	margin: 0 auto;
+	color: #ccc;
+	font-size: 20px;
+	bottom: 10px;
+	left: 20px;
+}
+.box {
+	z-index: 2;
+}
+.result {
+	display: inline-block;
+	margin-left: 30px;
+}
+
+#drag-and-drop-form label {
+	color: #525151;
+}
+
+#kiwi-form{
+	margin-top: 10px;
+	width: 100%;
+}
+
+#selectable-input-group .form-group:hover .field-actions{
+	display: block;
+}
+
+#selectable-input-group-default .form-group:hover .field-actions{
+	display: block;
+}
+
+.field-actions{
+	display: none;
+	position: absolute;
+	right: 35px;
+}
+
+
+#testdiv {
+	width: 200px;
+	height: 200px;
+	background: #ccc;
 }
