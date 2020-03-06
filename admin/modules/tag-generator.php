@@ -35,7 +35,7 @@ class KiwiCfTagGenerator {
 	}
 
 	public function print_buttons() {
-		echo '<div class="dropdown">
+		echo '<div class="dropdown" id="tag-generator-list">
                 <button type="button" class=" btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Modules
                 </button>

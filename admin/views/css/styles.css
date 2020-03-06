@@ -124,7 +124,7 @@ ul.config-error li {
 /*
  * Form Tab
  */
-#tag-generator-list a.button {
+#tag-generator-list a.thickbox {
 	font-size: 12px;
 	height: 26px;
 	line-height: 24px;
@@ -162,6 +162,7 @@ ul.config-error li {
 	width: 120px;
 	padding: 4px 10px 4px 0;
 	font-size: 13px;
+	vertical-align: middle;
 }
 
 .tag-generator-panel table.form-table td {
@@ -409,4 +410,30 @@ ul.config-error li {
 
 #drag-and-drop-form label {
 	color: #525151;
+}
+
+#kiwi-form{
+	margin-top: 10px;
+	width: 100%;
+}
+
+#selectable-input-group .form-group:hover .field-actions{
+	display: block;
+}
+
+#selectable-input-group-default .form-group:hover .field-actions{
+	display: block;
+}
+
+.field-actions{
+	display: none;
+	position: absolute;
+	right: 35px;
+}
+
+
+#testdiv {
+	width: 200px;
+	height: 200px;
+	background: #ccc;
 }

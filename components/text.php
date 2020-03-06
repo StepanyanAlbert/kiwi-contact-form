@@ -21,6 +21,10 @@ function kiwi_cf_text_form_tag_handler( $tag ) {
 	if ( empty( $tag->name ) ) {
 		return '';
 	}
+//	print "<pre>";
+//	var_dump($tag);
+
+
 
 	$validation_error = kiwi_cf_get_validation_error( $tag->name );
 
@@ -35,7 +39,7 @@ function kiwi_cf_text_form_tag_handler( $tag ) {
 	}
 
 	$atts = array();
-
+    $atts['label'] = $tag->get_label_option();
 	$atts['size'] = $tag->get_size_option( '40' );
 	$atts['maxlength'] = $tag->get_maxlength_option();
 	$atts['minlength'] = $tag->get_minlength_option();
@@ -240,6 +244,16 @@ function kiwi_cf_tag_generator_text( $contact_form, $args = '' ) {
 
 <table class="form-table">
 <tbody>
+    <tr>
+        <th scope="row" valign="middle"><?php echo esc_html( __( 'Label', 'kiwi-contact-form' ) ); ?></th>
+        <td>
+            <fieldset>
+                <legend class="screen-reader-text"><?php echo esc_html( __( 'Label', 'kiwi-contact-form' ) ); ?></legend>
+                <input type="text" name="label" class="tg-name oneline" />
+            </fieldset>
+        </td>
+    </tr>
+
 	<tr>
 	<th scope="row"><?php echo esc_html( __( 'Field type', 'kiwi-contact-form' ) ); ?></th>
 	<td>
@@ -258,7 +272,11 @@ function kiwi_cf_tag_generator_text( $contact_form, $args = '' ) {
 	<tr>
 	<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-values' ); ?>"><?php echo esc_html( __( 'Default value', 'kiwi-contact-form' ) ); ?></label></th>
 	<td><input type="text" name="values" class="oneline" id="<?php echo esc_attr( $args['content'] . '-values' ); ?>" /><br />
-	<label><input type="checkbox" name="placeholder" class="option" /> <?php echo esc_html( __( 'Use this text as the placeholder of the field', 'kiwi-contact-form' ) ); ?></label></td>
+	<label class="mt-2">
+        <input type="checkbox" name="placeholder" class="option" />
+        <?php echo esc_html( __( 'Use this text as the placeholder of the field', 'kiwi-contact-form' ) ); ?>
+    </label>
+    </td>
 	</tr>
 
 <?php if ( in_array( $type, array( 'text', 'email', 'url' ) ) ) : ?>
@@ -304,17 +322,16 @@ function kiwi_cf_tag_generator_text( $contact_form, $args = '' ) {
 </table>
 </fieldset>
 </div>
-
-<div class="insert-box">
-	<input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
-
-	<div class="submitbox">
-	<input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr( __( 'Insert Tag', 'kiwi-contact-form' ) ); ?>" />
-	</div>
-
-	<br class="clear" />
-
-	<p class="description mail-tag"><label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'kiwi-contact-form' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?><input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>" /></label></p>
+<div>
+    <div class="insert-box-description">
+        <p class="description mail-tag"><label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'kiwi-contact-form' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?><input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>" /></label></p>
+    </div>
+    <div class="insert-box" style="display: flex; align-items: center">
+        <input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
+        <div class="submitbox">
+          <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr( __( 'Insert Tag', 'kiwi-contact-form' ) ); ?>" />
+        </div>
+    </div>
 </div>
 <?php
 }

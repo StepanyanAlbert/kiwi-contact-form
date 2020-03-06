@@ -40,6 +40,7 @@ class KiwiCfFormTag implements ArrayAccess {
 			'signed_int' => '-?[0-9]+',
 			'class' => '[-0-9a-zA-Z_]+',
 			'id' => '[-0-9a-zA-Z_]+',
+            'label' => '\"[.]*\"'
 		);
 
 		if ( isset( $preset_patterns[$pattern] ) ) {
@@ -76,6 +77,10 @@ class KiwiCfFormTag implements ArrayAccess {
 			return $results;
 		}
 	}
+
+    public function get_label_option() {
+        return $this->get_option( 'label', 'label', true );
+    }
 
 	public function get_id_option() {
 		return $this->get_option( 'id', 'id', true );
